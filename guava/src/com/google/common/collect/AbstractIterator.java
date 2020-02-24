@@ -67,7 +67,10 @@ public abstract class AbstractIterator<T> extends UnmodifiableIterator<T> {
   /** Constructor for use by subclasses. */
   protected AbstractIterator() {}
 
-  private enum State {
+  /**
+   * Change the State of the enum to public just for 261P Unit Test
+   */
+  public enum State {
     /** We have computed the next element and haven't returned it yet. */
     READY,
 
@@ -170,5 +173,13 @@ public abstract class AbstractIterator<T> extends UnmodifiableIterator<T> {
       throw new NoSuchElementException();
     }
     return next;
+  }
+
+  /**
+   * Returns the state in the iterator just for 261P Unit Test
+   * @return state
+   */
+  public State getState() {
+    return state;
   }
 }
