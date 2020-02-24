@@ -4,7 +4,11 @@ import static com.google.common.truth.Truth.assertThat;
 
 import junit.framework.TestCase;
 
-/** Unit tests for {@link com.google.common.hash.LongAdder}. */
+/**
+ * Unit tests for {@link com.google.common.hash.LongAdder}.
+ *
+ * @author Wen-Chia, Yang
+ */
 public class LongAdderTest extends TestCase {
 
     public void testOverflows() {
