@@ -41,6 +41,8 @@ import com.google.common.testing.NullPointerTester;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
 /**
@@ -554,5 +556,9 @@ public class BigIntegerMathTest extends TestCase {
   @GwtIncompatible // String.format
   private static void failFormat(String template, Object... args) {
     fail(String.format(template, args));
+  }
+
+  public void testListProductWithZeroDifference() {
+    assertEquals(ONE, BigIntegerMath.listProduct(new ArrayList<>(),0,0));
   }
 }
