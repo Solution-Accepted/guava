@@ -507,4 +507,16 @@ public final class InternetDomainNameTest extends TestCase {
     tester.testAllPublicStaticMethods(InternetDomainName.class);
     tester.testAllPublicInstanceMethods(InternetDomainName.from("google.com"));
   }
+
+  public void testParts() {
+    ImmutableList<String> list = new InternetDomainName("www.google.com").parts();
+    assertEquals("www", list.get(0));
+    assertEquals("google", list.get(1));
+    assertEquals("com", list.get(2));
+  }
+
+  public void testTopDomainNotUnderRegistrySuffix() {
+    InternetDomainName domainName = new InternetDomainName("www.google.com");
+    assertEquals("google.com", domainName.topDomainUnderRegistrySuffix().toString());
+  }
 }
