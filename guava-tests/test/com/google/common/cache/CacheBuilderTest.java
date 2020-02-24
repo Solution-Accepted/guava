@@ -29,6 +29,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+import com.google.common.base.Equivalence;
 import com.google.common.base.Ticker;
 import com.google.common.cache.TestingRemovalListeners.CountingRemovalListener;
 import com.google.common.cache.TestingRemovalListeners.QueuingRemovalListener;
@@ -38,10 +39,7 @@ import com.google.common.testing.NullPointerTester;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.TestCase;
@@ -738,5 +736,29 @@ public class CacheBuilderTest extends TestCase {
       }
       return key;
     }
+  }
+
+  public void testToString() {
+    CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
+
+    assertThat(builder.toString()).isEqualTo("CacheBuilder{}");
+
+    LocalCache.Strength keyStrength = builder.getKeyStrength();
+    LocalCache.Strength valueStrength = builder.getValueStrength();
+    Equivalence<Object> keyEquivalence = builder.getKeyEquivalence();
+    Equivalence<Object> valueEquivalence = builder.getValueEquivalence();
+    RemovalListener removalListener = builder.getRemovalListener();
+    builder.initialCapacity(1)
+      .concurrencyLevel(1)
+      .maximumSize(10)
+      .expireAfterWrite(10, NANOSECONDS)
+      .expireAfterAccess(10, NANOSECONDS)
+      .setKeyStrength(keyStrength)
+      .setValueStrength(valueStrength)
+      .keyEquivalence(keyEquivalence)
+      .valueEquivalence(valueEquivalence)
+      .removalListener(removalListener);
+
+    assertThat(builder.toString()).isEqualTo("CacheBuilder{initialCapacity=1, concurrencyLevel=1, maximumSize=10, expireAfterWrite=10ns, expireAfterAccess=10ns, keyStrength=strong, valueStrength=strong, keyEquivalence, valueEquivalence, removalListener}");
   }
 }
