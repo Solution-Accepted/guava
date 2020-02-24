@@ -10,21 +10,21 @@ import junit.framework.TestCase;
  * @author Wen-Chia, Yang
  */
 public class LongAdderTest extends TestCase {
+    private static final int TEST_INT_VALUE = 10;
+    private static final double TEST_DOUBLE_VALUE = 10.0;
 
     public void testOverflows() {
         LongAdder longAdder = new LongAdder();
         longAdder.add(Long.MAX_VALUE);
         assertThat(longAdder.sum()).isEqualTo(Long.MAX_VALUE);
         longAdder.add(1);
-        // silently overflows; is this a bug?
-        // See https://github.com/google/guava/issues/3503
         assertThat(longAdder.sum()).isEqualTo(-9223372036854775808L);
     }
 
     public void testAdd() {
         LongAdder longAdder = new LongAdder();
-        longAdder.add(10);
-        assertThat(longAdder.sum()).isEqualTo(10);
+        longAdder.add(TEST_INT_VALUE);
+        assertThat(longAdder.sum()).isEqualTo(TEST_INT_VALUE);
     }
 
     public void testIncrement() {
@@ -52,5 +52,35 @@ public class LongAdderTest extends TestCase {
 
         longAdder.sumThenReset();
         assertThat(longAdder.sum()).isEqualTo(0);
+    }
+
+    public void testLongValue() {
+        LongAdder longAdder = new LongAdder();
+        longAdder.add(TEST_INT_VALUE);
+        assertThat(longAdder.longValue()).isEqualTo((long) TEST_INT_VALUE);
+    }
+
+    public void testIntValue() {
+        LongAdder longAdder = new LongAdder();
+        longAdder.add(TEST_INT_VALUE);
+        assertThat(longAdder.intValue()).isEqualTo(TEST_INT_VALUE);
+    }
+
+    public void testFloatValue() {
+        LongAdder longAdder = new LongAdder();
+        longAdder.add((int) TEST_DOUBLE_VALUE);
+        assertThat(longAdder.floatValue()).isEqualTo((float) TEST_DOUBLE_VALUE);
+    }
+
+    public void testDoubleValue() {
+        LongAdder longAdder = new LongAdder();
+        longAdder.add((int) TEST_DOUBLE_VALUE);
+        assertThat(longAdder.doubleValue()).isEqualTo(TEST_DOUBLE_VALUE);
+    }
+
+    public void testToString() {
+        LongAdder longAdder = new LongAdder();
+        longAdder.add(TEST_INT_VALUE);
+        assertThat(longAdder.toString()).isEqualTo(String.valueOf(TEST_INT_VALUE));
     }
 }

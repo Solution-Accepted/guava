@@ -37,4 +37,56 @@ public class LongAdderTest extends TestCase {
     // See https://github.com/google/guava/issues/3503
     assertThat(longAdder.sum()).isEqualTo(-9223372036854775808L);
   }
+
+  public void testDecrement() {
+    LongAdder longAdder = new LongAdder();
+    longAdder.decrement();
+    assertThat(longAdder.sum()).isEqualTo(-1);
+  }
+
+  public void testIncrease() {
+    LongAdder longAdder = new LongAdder();
+    longAdder.increment();
+    assertThat(longAdder.sum()).isEqualTo(1);
+  }
+
+  public void testReset() {
+    LongAdder longAdder = new LongAdder();
+    longAdder.reset();
+    assertThat(longAdder.sum()).isEqualTo(0);
+  }
+
+  public void testSumThenReset() {
+    LongAdder longAdder = new LongAdder();
+    longAdder.increment();
+    assertThat(longAdder.sum()).isEqualTo(1);
+
+    longAdder.sumThenReset();
+    assertThat(longAdder.sum()).isEqualTo(0);
+  }
+
+  public void testLongValue() {
+    LongAdder longAdder = new LongAdder();
+    assertThat(longAdder.longValue()).isEqualTo(0);
+  }
+
+  public void testintValue() {
+    LongAdder longAdder = new LongAdder();
+    assertThat(longAdder.intValue()).isEqualTo(0);
+  }
+
+  public void testFloatValue() {
+    LongAdder longAdder = new LongAdder();
+    assertThat(longAdder.floatValue()).isEqualTo(0);
+  }
+
+  public void testDoubleValue() {
+    LongAdder longAdder = new LongAdder();
+    assertThat(longAdder.doubleValue()).isEqualTo(0);
+  }
+
+  public void testToString() {
+    LongAdder longAdder = new LongAdder();
+    assertThat(longAdder.toString()).isEqualTo("0");
+  }
 }
