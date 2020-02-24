@@ -20,7 +20,7 @@ after_failure:
 
 cache:
   directories:
-  - $HOME/.m2
+    - $HOME/.m2
 
 env:
   global:
@@ -35,3 +35,4 @@ branches:
   only:
     - master
     - /^release.*$/
+    - v28.2-261p

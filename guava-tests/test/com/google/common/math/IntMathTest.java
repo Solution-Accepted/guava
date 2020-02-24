@@ -44,6 +44,40 @@ import junit.framework.TestCase;
  */
 @GwtCompatible(emulated = true)
 public class IntMathTest extends TestCase {
+  private final int[] EXPECTED_RESULT_POSITIVE = {1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
+  private static final int[] NEGATIVE_INOUT_CANDIDATES = {-2, -6, -7};
+  private static final int[] BIG_INTEGER_CANDIDATES = {13, Integer.MAX_VALUE};
+
+  public void testFactorialWithoutOverflow() {
+    for (int i = 1; i <= EXPECTED_RESULT_POSITIVE.length; i++) {
+      int result = IntMath.factorial(i);
+      assertEquals(EXPECTED_RESULT_POSITIVE[i - 1], result);
+    }
+  }
+
+  public void testFactorialWithOverflow() {
+    for (int n : BIG_INTEGER_CANDIDATES) {
+      int result = IntMath.factorial(n);
+      assertEquals(Integer.MAX_VALUE, result);
+    }
+
+  }
+
+  public void testFactorialZero() {
+    int result = IntMath.factorial(0);
+    assertEquals(1, result);
+  }
+
+  public void testFactorialNegativeValue() {
+    for (int n : NEGATIVE_INOUT_CANDIDATES) {
+      try {
+        IntMath.factorial(n);
+        fail("Expected IllegalArgumentException");
+      } catch (IllegalArgumentException expected) {
+      }
+    }
+  }
+
   public void testMaxSignedPowerOfTwo() {
     assertTrue(IntMath.isPowerOfTwo(IntMath.MAX_SIGNED_POWER_OF_TWO));
 

@@ -33,6 +33,143 @@ import junit.framework.TestCase;
 @GwtCompatible(emulated = true)
 public class AbstractIteratorTest extends TestCase {
 
+  /**
+   * Test state from NOT_READY to DONE
+   */
+  public void testStateNotReadyToDone() {
+    // Case 1: Initial state: NOT_READY
+    AbstractIterator<Integer> iter = new AbstractIterator<Integer>() {
+      @Override
+      protected Integer computeNext() {
+        return endOfData();
+      }
+    };
+
+    assertEquals(AbstractIterator.State.NOT_READY, iter.getState());
+
+    // Case 2: NOT_READY -- hasNext1 -> DONE
+    iter.hasNext(); // hasNext1
+    assertEquals(AbstractIterator.State.DONE, iter.getState());
+
+    // Case 3 (loop): DONE -- hasNext -> DONE
+    iter.hasNext();
+    assertEquals(AbstractIterator.State.DONE, iter.getState());
+
+    // Case 4 (loop): DONE -- next -> DONE
+    try {
+      iter.next();
+      fail("no exception thrown");
+    } catch (NoSuchElementException expected) {
+      assertEquals(AbstractIterator.State.DONE, iter.getState());
+    }
+
+    // Case 5 (loop): DONE -- peek -> DONE
+    try {
+      iter.peek();
+      fail("no exception thrown");
+    } catch (NoSuchElementException expected) {
+      assertEquals(AbstractIterator.State.DONE, iter.getState());
+    }
+  }
+
+  /**
+   * Test state from NOT_READY to FAILED
+   */
+  public void testStateNotReadyToFailed() {
+    // Case 1: Initial state: NOT_READY
+    AbstractIterator<Integer> iter = new AbstractIterator<Integer>() {
+      @Override
+      protected Integer computeNext() {
+        sneakyThrow(new SomeCheckedException());
+        return null;
+      }
+    };
+
+    assertEquals(AbstractIterator.State.NOT_READY, iter.getState());
+
+    // Case 2: NOT_READY -- hasNext2 -> FAILED
+    try {
+      iter.hasNext(); // hasNext2
+      fail("no exception thrown");
+    } catch (Exception expected) {
+      assertEquals(AbstractIterator.State.FAILED, iter.getState());
+    }
+
+    // Case 3 (loop): FAILED -- hasNext -> FAILED
+    try {
+      iter.hasNext(); // hasNext
+      fail("no exception thrown");
+    } catch (Exception expected) {
+      assertEquals(AbstractIterator.State.FAILED, iter.getState());
+    }
+
+    // Case 4 (loop): FAILED -- next -> FAILED
+    try {
+      iter.next();
+      fail("no exception thrown");
+    } catch (Exception expected) {
+      assertEquals(AbstractIterator.State.FAILED, iter.getState());
+    }
+
+    // Case 5 (loop): FAILED -- peek -> FAILED
+    try {
+      iter.peek();
+      fail("no exception thrown");
+    } catch (Exception expected) {
+      assertEquals(AbstractIterator.State.FAILED, iter.getState());
+    }
+  }
+
+  /**
+   * Test state from NOT_READY to READY to NOT_READY
+   */
+  public void testStateNotReadyToReadyToNotReady() {
+    // Case 1: Initial state: NOT_READY
+    AbstractIterator<Integer> iter = new AbstractIterator<Integer>() {
+      @Override
+      protected Integer computeNext() {
+        return null;
+      }
+    };
+
+    assertEquals(AbstractIterator.State.NOT_READY, iter.getState());
+
+    // Case 2: NOT_READY -- hasNext3 -> FAILED
+    iter.hasNext(); // hasNext3
+    assertEquals(AbstractIterator.State.READY, iter.getState());
+
+    // Case 3: READY -- next -> NOT_READY
+    iter.next();
+    assertEquals(AbstractIterator.State.NOT_READY, iter.getState());
+  }
+
+  /**
+   * Test state from NOT_READY to READY
+   */
+  public void testStateNotReadyToReady() {
+    // Case 1: Initial state: NOT_READY
+    AbstractIterator<Integer> iter = new AbstractIterator<Integer>() {
+      @Override
+      protected Integer computeNext() {
+        return null;
+      }
+    };
+
+    assertEquals(AbstractIterator.State.NOT_READY, iter.getState());
+
+    // Case 2: NOT_READY -- hasNext3 -> READY
+    iter.hasNext(); // hasNext3
+    assertEquals(AbstractIterator.State.READY, iter.getState());
+
+    // Case 3 (loop): READY -- hasNext -> READY
+    iter.hasNext();
+    assertEquals(AbstractIterator.State.READY, iter.getState());
+
+    // Case 4 (loop): READY -- peek -> READY
+    iter.peek();
+    assertEquals(AbstractIterator.State.READY, iter.getState());
+  }
+
   public void testDefaultBehaviorOfNextAndHasNext() {
 
     // This sample AbstractIterator returns 0 on the first call, 1 on the
