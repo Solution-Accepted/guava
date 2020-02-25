@@ -51,7 +51,7 @@ import com.google.common.escape.UnicodeEscaper;
  */
 @Beta
 @GwtCompatible
-public final class PercentEscaper extends UnicodeEscaper {
+public class PercentEscaper extends UnicodeEscaper {
 
   // In some escapers spaces are escaped to '+'
   private static final char[] PLUS_SIGN = {'+'};
@@ -86,21 +86,50 @@ public final class PercentEscaper extends UnicodeEscaper {
     // TODO(dbeaumont): Switch to static factory methods for creation now that class is final.
     // TODO(dbeaumont): Support escapers where alphanumeric chars are not safe.
     checkNotNull(safeChars); // eager for GWT.
+    // generate safe char
+    safeChars = generateSafeCharts(safeChars, plusForSpace);
+    this.plusForSpace = plusForSpace;
+    this.safeOctets = createSafeOctets(safeChars);
+  }
+
+  protected String generateSafeCharts(String safeChars, boolean plusForSpace) {
     // Avoid any misunderstandings about the behavior of this escaper
-    if (safeChars.matches(".*[0-9A-Za-z].*")) {
+    String regex = ".*[0-9A-Za-z].*";
+    if (safeChars.matches(regex)) {
       throw new IllegalArgumentException(
-          "Alphanumeric characters are always 'safe' and should not be explicitly specified");
+              "Alphanumeric characters are always 'safe' and should not be explicitly specified");
     }
     safeChars += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     // Avoid ambiguous parameters. Safe characters are never modified so if
     // space is a safe character then setting plusForSpace is meaningless.
     if (plusForSpace && safeChars.contains(" ")) {
       throw new IllegalArgumentException(
-          "plusForSpace cannot be specified when space is a 'safe' character");
+              "plusForSpace cannot be specified when space is a 'safe' character");
     }
-    this.plusForSpace = plusForSpace;
-    this.safeOctets = createSafeOctets(safeChars);
+
+    return safeChars;
   }
+
+  // original
+//  public PercentEscaper(String safeChars, boolean plusForSpace) {
+//    // TODO(dbeaumont): Switch to static factory methods for creation now that class is final.
+//    // TODO(dbeaumont): Support escapers where alphanumeric chars are not safe.
+//    checkNotNull(safeChars); // eager for GWT.
+//    // Avoid any misunderstandings about the behavior of this escaper
+//    if (safeChars.matches(".*[0-9A-Za-z].*")) {
+//      throw new IllegalArgumentException(
+//              "Alphanumeric characters are always 'safe' and should not be explicitly specified");
+//    }
+//    safeChars += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+//    // Avoid ambiguous parameters. Safe characters are never modified so if
+//    // space is a safe character then setting plusForSpace is meaningless.
+//    if (plusForSpace && safeChars.contains(" ")) {
+//      throw new IllegalArgumentException(
+//              "plusForSpace cannot be specified when space is a 'safe' character");
+//    }
+//    this.plusForSpace = plusForSpace;
+//    this.safeOctets = createSafeOctets(safeChars);
+//  }
 
   /**
    * Creates a boolean array with entries corresponding to the character values specified in

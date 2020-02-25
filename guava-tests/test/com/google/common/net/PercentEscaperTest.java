@@ -33,6 +33,10 @@ import junit.framework.TestCase;
  */
 @GwtCompatible
 public class PercentEscaperTest extends TestCase {
+  public void testPercentEscaperNewConstructor() {
+    // TODO(261): - Add test case here, using class MockPercentEscaper
+
+  }
 
   /** Tests that the simple escaper treats 0-9, a-z and A-Z as safe */
   public void testSimpleEscaper() {

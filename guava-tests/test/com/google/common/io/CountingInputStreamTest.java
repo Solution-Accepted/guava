@@ -45,11 +45,12 @@ public class CountingInputStreamTest extends IoTestCase {
   }
 
   public void testByMackito() throws IOException {
+    // TODO(261): - Add Mockito test here, this one is just a simple example
     when(mockCounter.read(inputStream)).thenReturn(inputStream.length);
     when(mockCounter.getCount()).thenReturn((long) inputStream.length);
     assertThat(mockCounter.read(inputStream)).isEqualTo(inputStream.length);
     assertThat(mockCounter.getCount()).isEqualTo(inputStream.length);
-
+    
   }
 
   public void testReadSingleByte() throws IOException {
