@@ -16,15 +16,13 @@
 
 package com.google.common.net;
 
-import static com.google.common.escape.testing.EscaperAsserts.assertEscaping;
-import static com.google.common.escape.testing.EscaperAsserts.assertUnescaped;
-import static com.google.common.escape.testing.EscaperAsserts.assertUnicodeEscaping;
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Preconditions;
 import com.google.common.escape.UnicodeEscaper;
 import junit.framework.TestCase;
+
+import static com.google.common.escape.testing.EscaperAsserts.*;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Tests for {@link PercentEscaper}.
@@ -33,12 +31,28 @@ import junit.framework.TestCase;
  */
 @GwtCompatible
 public class PercentEscaperTest extends TestCase {
-  public void testPercentEscaperNewConstructor() {
-    // TODO(261): - Add test case here, using class MockPercentEscaper
 
+  public void testCreateSafeChars() {
+    final String baseSafeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    assertEquals(baseSafeChars, PercentEscaper.createSafeChars("", false));
+    assertEquals("-" + baseSafeChars, PercentEscaper.createSafeChars("-", false));
+    baseSafeChars.chars().forEach((ch) -> {
+      try {
+        PercentEscaper.createSafeChars(String.valueOf(ch), false);
+      } catch (IllegalArgumentException expected) {
+        // "Alphanumeric characters are always 'safe' and should not be explicitly specified"
+      }
+    });
+    try {
+      PercentEscaper.createSafeChars(" ", true);
+    } catch (IllegalArgumentException expected) {
+      // "plusForSpace cannot be specified when space is a 'safe' character"
+    }
   }
 
-  /** Tests that the simple escaper treats 0-9, a-z and A-Z as safe */
+  /**
+   * Tests that the simple escaper treats 0-9, a-z and A-Z as safe
+   */
   public void testSimpleEscaper() {
     UnicodeEscaper e = new PercentEscaper("", false);
     for (char c = 0; c < 128; c++) {
@@ -66,7 +80,9 @@ public class PercentEscaperTest extends TestCase {
     assertEquals("max%EF%BF%BFchar", e.escape("max\uffffchar"));
   }
 
-  /** Tests the various ways that the space character can be handled */
+  /**
+   * Tests the various ways that the space character can be handled
+   */
   public void testPlusForSpace() {
     UnicodeEscaper basicEscaper = new PercentEscaper("", false);
     UnicodeEscaper plusForSpaceEscaper = new PercentEscaper("", true);
@@ -77,7 +93,9 @@ public class PercentEscaperTest extends TestCase {
     assertEquals("string with spaces", spaceEscaper.escape("string with spaces"));
   }
 
-  /** Tests that if we add extra 'safe' characters they remain unescaped */
+  /**
+   * Tests that if we add extra 'safe' characters they remain unescaped
+   */
   public void testCustomEscaper() {
     UnicodeEscaper e = new PercentEscaper("+*/-", false);
     for (char c = 0; c < 128; c++) {
@@ -92,14 +110,18 @@ public class PercentEscaperTest extends TestCase {
     }
   }
 
-  /** Tests that if specify '%' as safe the result is an idempotent escaper. */
+  /**
+   * Tests that if specify '%' as safe the result is an idempotent escaper.
+   */
   public void testCustomEscaper_withpercent() {
     UnicodeEscaper e = new PercentEscaper("%", false);
     assertEquals("foo%7Cbar", e.escape("foo|bar"));
     assertEquals("foo%7Cbar", e.escape("foo%7Cbar")); // idempotent
   }
 
-  /** Test that giving a null 'safeChars' string causes a {@link NullPointerException}. */
+  /**
+   * Test that giving a null 'safeChars' string causes a {@link NullPointerException}.
+   */
   public void testBadArguments_null() {
     try {
       new PercentEscaper(null, false);
@@ -143,7 +165,9 @@ public class PercentEscaperTest extends TestCase {
     }
   }
 
-  /** Helper to manually escape a 7-bit ascii character */
+  /**
+   * Helper to manually escape a 7-bit ascii character
+   */
   private String escapeAscii(char c) {
     Preconditions.checkArgument(c < 128);
     String hex = "0123456789ABCDEF";
