@@ -17,6 +17,9 @@
 package com.google.common.io;
 
 import static org.mockito.Mockito.*;
+
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -32,25 +35,50 @@ import java.io.InputStream;
  */
 public class CountingInputStreamTest extends IoTestCase {
   private CountingInputStream counter;
-
   private CountingInputStream mockCounter;
-  @Spy
-  private byte[] inputStream = new byte[50];
+
+  private ByteArrayInputStream mockInputStream;
+//  @Spy
+//  private byte[] inputStream = new byte[50];
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     counter = new CountingInputStream(new ByteArrayInputStream(new byte[20]));
-    mockCounter = mock(CountingInputStream.class);
+    mockInputStream = mock(ByteArrayInputStream.class);
+    mockCounter = new CountingInputStream(mockInputStream);
+
+    MockitoAnnotations.initMocks(this);
   }
 
-  public void testByMackito() throws IOException {
-    // TODO(261): - Add Mockito test here, this one is just a simple example
-    when(mockCounter.read(inputStream)).thenReturn(inputStream.length);
-    when(mockCounter.getCount()).thenReturn((long) inputStream.length);
-    assertThat(mockCounter.read(inputStream)).isEqualTo(inputStream.length);
-    assertThat(mockCounter.getCount()).isEqualTo(inputStream.length);
-    
+  public void testReadSingleByteByMockito() throws IOException {
+    when(mockInputStream.read()).thenReturn(0);
+    assertThat(mockCounter.read()).isEqualTo(0);
+    assertThat(mockCounter.getCount()).isEqualTo(1);
+  }
+
+  public void testSkipByMockito() throws IOException {
+    when(mockInputStream.skip(10)).thenReturn((long)10);
+    assertThat(mockCounter.skip(10)).isEqualTo(10);
+    assertThat(mockCounter.getCount()).isEqualTo(10);
+  }
+
+  public void testSkipEOFByMockito() throws IOException {
+    when(mockInputStream.skip(30)).thenReturn((long)20);
+    when(mockInputStream.skip(20)).thenReturn((long)0);
+    assertThat(mockCounter.skip(30)).isEqualTo(20);
+    assertThat(mockCounter.getCount()).isEqualTo(20);
+    assertThat(mockCounter.skip(20)).isEqualTo(0);
+    assertThat(mockCounter.getCount()).isEqualTo(20);
+  }
+  public void testMarkNotSupportedByMockito() {
+    when(mockInputStream.markSupported()).thenReturn(false);
+    try {
+      mockCounter.reset();
+      fail();
+    } catch (IOException expected) {
+      assertThat(expected).hasMessageThat().isEqualTo("Mark not supported");
+    }
   }
 
   public void testReadSingleByte() throws IOException {
