@@ -16,6 +16,9 @@
 
 package com.google.common.io;
 
+import static org.mockito.Mockito.*;
+import org.mockito.Spy;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import java.io.ByteArrayInputStream;
@@ -30,10 +33,23 @@ import java.io.InputStream;
 public class CountingInputStreamTest extends IoTestCase {
   private CountingInputStream counter;
 
+  private CountingInputStream mockCounter;
+  @Spy
+  private byte[] inputStream = new byte[50];
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     counter = new CountingInputStream(new ByteArrayInputStream(new byte[20]));
+    mockCounter = mock(CountingInputStream.class);
+  }
+
+  public void testByMackito() throws IOException {
+    when(mockCounter.read(inputStream)).thenReturn(inputStream.length);
+    when(mockCounter.getCount()).thenReturn((long) inputStream.length);
+    assertThat(mockCounter.read(inputStream)).isEqualTo(inputStream.length);
+    assertThat(mockCounter.getCount()).isEqualTo(inputStream.length);
+
   }
 
   public void testReadSingleByte() throws IOException {

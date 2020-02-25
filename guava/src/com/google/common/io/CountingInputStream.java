@@ -30,7 +30,7 @@ import java.io.InputStream;
  */
 @Beta
 @GwtIncompatible
-public final class CountingInputStream extends FilterInputStream {
+public class CountingInputStream extends FilterInputStream {
 
   private long count;
   private long mark = -1;
