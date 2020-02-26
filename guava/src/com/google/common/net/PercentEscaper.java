@@ -83,16 +83,14 @@ public class PercentEscaper extends UnicodeEscaper {
    * @throws IllegalArgumentException if any of the parameters were invalid
    */
   public PercentEscaper(String safeChars, boolean plusForSpace) {
-    // TODO(dbeaumont): Switch to static factory methods for creation now that class is final.
-    // TODO(dbeaumont): Support escapers where alphanumeric chars are not safe.
-    checkNotNull(safeChars); // eager for GWT.
-    // generate safe char
-    safeChars = generateSafeCharts(safeChars, plusForSpace);
+    checkNotNull(safeChars);
+    safeChars = createSafeChars(safeChars, plusForSpace); // our modification
     this.plusForSpace = plusForSpace;
     this.safeOctets = createSafeOctets(safeChars);
   }
 
-  protected String generateSafeCharts(String safeChars, boolean plusForSpace) {
+  // newly added
+  protected static String createSafeChars(String safeChars, boolean plusForSpace) {
     // Avoid any misunderstandings about the behavior of this escaper
     String regex = ".*[0-9A-Za-z].*";
     if (safeChars.matches(regex)) {
