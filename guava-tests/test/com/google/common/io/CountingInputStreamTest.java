@@ -22,6 +22,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
+import javax.ws.rs.HEAD;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import java.io.ByteArrayInputStream;
@@ -35,27 +37,17 @@ import java.io.InputStream;
  */
 public class CountingInputStreamTest extends IoTestCase {
   private CountingInputStream counter;
-
-<<<<<<< HEAD
-  private InputStream mockInputStream;
-=======
   // region Mockito Mock Test Properties
   private CountingInputStream mockCounter;
-  private ByteArrayInputStream mockInputStream;
+  private InputStream mockInputStream;
   // endregion
->>>>>>> 6de882e276606599324a6d275fe897275c1e82a8
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     counter = new CountingInputStream(new ByteArrayInputStream(new byte[20]));
-<<<<<<< HEAD
-    mockInputStream = mock(InputStream.class);
-=======
-
     // for Mockito Mock Test
-    mockInputStream = mock(ByteArrayInputStream.class);
->>>>>>> 6de882e276606599324a6d275fe897275c1e82a8
+    mockInputStream = mock(InputStream.class);
     mockCounter = new CountingInputStream(mockInputStream);
     MockitoAnnotations.initMocks(this);
   }
