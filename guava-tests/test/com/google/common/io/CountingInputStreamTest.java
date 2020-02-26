@@ -37,15 +37,13 @@ public class CountingInputStreamTest extends IoTestCase {
   private CountingInputStream counter;
   private CountingInputStream mockCounter;
 
-  private ByteArrayInputStream mockInputStream;
-//  @Spy
-//  private byte[] inputStream = new byte[50];
+  private InputStream mockInputStream;
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     counter = new CountingInputStream(new ByteArrayInputStream(new byte[20]));
-    mockInputStream = mock(ByteArrayInputStream.class);
+    mockInputStream = mock(InputStream.class);
     mockCounter = new CountingInputStream(mockInputStream);
 
     MockitoAnnotations.initMocks(this);
